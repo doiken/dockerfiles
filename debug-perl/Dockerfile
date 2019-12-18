@@ -1,6 +1,7 @@
 FROM centos/tools
 MAINTAINER ryugaku2008
 
+ARG version="5.24.4"
 ENV container docker
 LABEL RUN="docker run -it --name NAME --privileged  —cap-add=SYS_PTRACE —security-opt='seccomp=unconfined' --ipc=host --net=host --pid=host -e HOST=/host -e NAME=NAME -e IMAGE=IMAGE -v /sys/fs/selinux:/sys/fs/selinux:ro -v /run:/run -v /var/log:/var/log -v /etc/localtime:/etc/localtime -v /:/host IMAGE"
 
@@ -15,11 +16,13 @@ RUN curl -L http://install.perlbrew.pl | bash
 ENV PATH $PATH:/root/perl5/perlbrew/bin/
 RUN echo "source ~/perl5/perlbrew/etc/bashrc" >> ~/.bash_profile
 
-RUN mkdir -p /perlbrew/dists
-RUN PERLBREW_ROOT=/perlbrew perlbrew install --notest 5.24.4 --as=perl-5.24.4-gO0 -DDEBUGGING=-g -Doptimize=-O0
+RUN perlbrew install --notest ${version} --as=perl-${version}-gO0 -DDEBUGGING=-g -Doptimize=-O0
+RUN bash -lc 'perlbrew switch perl-${version}-gO0'
 
 RUN debuginfo-install -y glibc-2.17-260.el7.x86_64 nss-softokn-freebl-3.36.0-5.el7_5.x86_64
-RUN echo -e "set history filename ~/.gdb_history\nset history save on" >> ~/.gdbinit 
+RUN echo -e "set history filename ~/.gdb_history\nset history save on" >> ~/.gdbinit
+
+RUN bash -lc 'cpan install Term::ReadKey; cpan install -T Term::ReadLine::Perl'
 
 # Set default command
-CMD ["/usr/bin/bash"]
+CMD ["/usr/bin/bash", "-l"]
