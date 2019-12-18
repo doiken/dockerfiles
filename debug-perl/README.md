@@ -6,7 +6,7 @@ debug-perl is for debugging perl.
 Command
 ----
 
-```
+``` bash
 # pull
 docker pull doiken208/debug-perl
 # run
