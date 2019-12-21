@@ -20,7 +20,7 @@ RUN perlbrew install --notest ${version} --as=perl-${version}-gO0 -DDEBUGGING=-g
 RUN bash -lc 'perlbrew switch perl-${version}-gO0'
 
 RUN debuginfo-install -y glibc-2.17-260.el7.x86_64 nss-softokn-freebl-3.36.0-5.el7_5.x86_64
-RUN echo -e "set history filename ~/.gdb_history\nset history save on" >> ~/.gdbinit
+COPY .gdbinit /root/.gdbinit
 
 RUN bash -lc 'cpan install Term::ReadKey; cpan install -T Term::ReadLine::Perl'
 
